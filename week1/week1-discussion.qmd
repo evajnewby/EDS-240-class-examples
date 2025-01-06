@@ -1,0 +1,12 @@
+---
+title: "EDS 240 Week 1 Discussion"
+author: "Eva Newby"
+date: "today"
+format: html
+editor: visual
+---
+
+```{r}
+
+```
+
