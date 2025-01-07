@@ -4,9 +4,78 @@ author: "Eva Newby"
 date: "today"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
+### Import Fracking Data
+```{r}
+# Load packages
+library(tidyverse)
+library(janitor)
+library(usdata)
+library(here)
+```
 
 ```{r}
+# Read-in fracking data
+fracking <- read_csv(here("week1", "data", "registryupload_1.csv"))
+```
 
+### Data Exploration
+```{r}
+# Dimensions
+dim(fracking)
+
+# Structure
+str(fracking)
+
+# view
+view(fracking)
+```
+
+### Clean Fracking data
+```{r}
+fracking_clean <- fracking %>% 
+  janitor::clean_names() %>% # convert to snake case
+  mutate(job_start_date = str_remove(job_start_date, " AM")) %>% # remove AM
+  mutate(datetime_start = mdy_hms(job_start_date)) %>% # dates
+  mutate(year = year(datetime_start)) %>%  # add a year column
+  select(datetime_start, year, state_name, well_name, total_base_water_volume) %>% # keep only necessary columns
+  mutate(state_name = str_to_title(state_name)) %>% # convert observations
+  filter(!str_detect(string = state_name, pattern = "\\?")) %>% # remove any ?
+  mutate(state_name = ifelse(test = str_length(state_name) == 2, 
+                             yes = abbr2state(state_name),
+                             no = state_name)) %>% # convert state abbreviations
+   mutate(state_name = case_when(
+    state_name == "Colordao" ~ "Colorado",
+    state_name == "Loiusiana" ~ "Louisiana",
+    state_name == "Louisianna" ~ "Louisiana",
+    state_name == "Lousiana" ~ "Louisiana",
+    state_name == "New Mexcio" ~ "New Mexico",
+    state_name == "Norh Dakota" ~ "North Dakota",
+    state_name == "Norht Dakota" ~ "North Dakota",
+    state_name == "North  Dakota" ~ "North Dakota",
+    state_name == "North Dakata" ~ "North Dakota",
+    state_name == "North Dakotta" ~ "North Dakota",
+    state_name == "Noth Dakota" ~ "North Dakota",
+    state_name == "Pennslvania" ~ "Pennsylvania",
+    state_name == "Pennsylavania" ~ "Pennsylvania",
+    state_name == "Pennsylvanya" ~ "Pennsylvania",
+    state_name == "Penssylvania" ~ "Pennsylvania",
+    state_name == "Texasa" ~ "Texas",
+    state_name == "Texs" ~ "Texas", 
+    state_name == "West Viginia" ~ "West Virginia",
+    state_name == "Wyominng" ~ "Wyoming", 
+    TRUE ~ state_name # copy over rest of state names from as-is
+  )) %>% # correct misspelled state names
+  filter(!state_name %in% c("Beaver", "Beckham", "Harper", "Hemphill", "Midland", "Red River", "Roosevelt", "Rusk", "State", "Ward")) %>% # remove rows that do not have a US state name
+  mutate(state_abb = state2abbr(state_name)) %>%  # add state abb column
+  relocate(state_abb, .after = state_name) %>% 
+  rename(total_base_water_volume_gal = total_base_water_volume) %>% 
+  drop_na(total_base_water_volume_gal) %>% 
+  arrange(datetime_start)
+
+# View changes
+view(fracking_clean)
 ```
 
