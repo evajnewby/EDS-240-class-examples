@@ -1,0 +1,12 @@
+---
+title: "week2-discussion"
+author: "Eva Newby"
+date: "January 14, 2025"
+format: html
+editor: visual
+---
+
+```{r}
+
+```
+
