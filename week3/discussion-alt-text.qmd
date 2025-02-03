@@ -1,0 +1,30 @@
+---
+title: "Week 3 - Alt Text"
+author: "Eva Newby"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Example 1
+
+```{r}
+library(ggplot2)
+library(palmerpenguins)
+```
+
+```{r warning= = False, message=FALSE}
+#| fig-alt: "Stacked histogram of penguin body masses per species where Gentoo has the highest average body mass (in grams)."
+#| warning: false
+#| message: false
+#| echo: false
+
+ggplot(data = penguins, aes(x = body_mass_g, fill = species)) +
+  geom_histogram(alpha = 0.5, 
+                 position = "identity") +
+  scale_fill_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Body mass (g)",
+       y = "Frequency",
+       title = "Penguin body masses")
+```
