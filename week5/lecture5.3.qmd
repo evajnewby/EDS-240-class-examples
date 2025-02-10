@@ -175,9 +175,11 @@ my_brew_palette10 <- RColorBrewer::brewer.pal(n = 10, name = "BrBG")
 ```{r}
 #| eval: true
 #| echo: true
-# classed map with default bins ----
+# classed map with specified bins ----
 base_map + 
   scale_fill_stepsn(colors = my_brew_palette10,
-                    labels = scales::label_percent(scale = 1)) +
+                    labels = scales::label_percent(scale = 1),
+  breaks = breaks_width(width=10),
+  values = rescale(x = c(-40, 0, 20))) +
   guides(fill = guide_colorsteps(barwidth = 25, barheight = 0.75))
 ```
